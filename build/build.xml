@@ -1,0 +1,133 @@
+<project name="Build SRC and MIN Files" default="all" basedir="..">
+	<!-- Basic project info: name/version -->
+	<property name="PROJECT_NAME" value="domFormat" description="The name of this project." />
+	<property name="VERSION" value="1.0" description="Current version number." />
+	<!-- Directory and file names for source and distribution files -->
+	<property name="DIST_DIR" value="${basedir}" description="Output folder for the files to distribute." />
+	<property name="DIST_FILE_SRC" value="${PROJECT_NAME}-${VERSION}.js" />
+	<property name="DIST_FILE_MIN" value="${PROJECT_NAME}-${VERSION}.min.js" />
+	<property name="EXAMPLES_DIR" value="${basedir}/examples" description="Output folder for the example files." />
+	<property name="TEMPLATES_DIR" value="${EXAMPLES_DIR}/templates" description="Folder containing the example template files." />
+	<property name="README_FILE" value="${basedir}/README.md" description="Path to the README file." />
+	<property name="SOURCE_DIR" value="${basedir}/src" description="Path to the source file." />
+	<property name="SOURCE_FILE" value="domFormat.js" description="Path to the source file." />
+	<property name="SOURCE_LIB" value="${SOURCE_DIR}/lib" description="Path to the source lib file." />
+	<!-- Library files for building: helper jars and .js files -->
+	<property name="JSLINTJS" value="${basedir}/build/lib/jslint.js" description="JSLint javascript file." />
+	<property name="JSLINT4JAVA" value="${basedir}/build/lib/jslint4java-2.0.0.jar" description="JSLint4Java file." />
+	<property name="YUI" value="${basedir}/build/lib/yuicompressor-2.4.6.jar" description="YUICompressor jar file." />
+
+	<!-- JSLint -->
+	<taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${JSLINT4JAVA}" />
+	<target name="build.lint" description="Run JSLint on source file.">
+		<echo message="Running JSLint." />
+		<jslint jslint="${JSLINTJS}">
+			<formatter type="plain" />
+			<filelist dir="${SOURCE_DIR}">
+				<file name="${SOURCE_FILE}" />
+			</filelist>
+		</jslint>
+	</target>
+
+	<!-- Clear the distribution folder -->
+	<target name="build.clear" depends="build.lint" description="Clear the distribution folder.">
+		<echo message="Clearing the distribution folder." />
+		<delete>
+			<fileset dir="${DIST_DIR}">
+				<include name="*.js" />
+			</fileset>
+		</delete>
+	</target>
+
+	<!-- Create Source File -->
+	<target name="build.src" depends="build.clear" description="Create source file.">
+		<echo message="Creating source file: ${DIST_FILE_SRC}" />
+
+		<!-- create source file -->
+		<copy file="${SOURCE_DIR}/${SOURCE_FILE}" tofile="${DIST_DIR}/${DIST_FILE_SRC}" />
+
+		<!-- store build time -->
+		<tstamp>
+			<format property="TIME" pattern="MMMM dd, yyyy [yyyy-MM-dd HH:mm:ss]" unit="hour" />
+		</tstamp>
+
+		<!-- store readme contents -->
+		<loadfile property="README" srcFile="${README_FILE}" />
+
+		<!-- set correct time and version in our distributed file -->
+		<replace file="${DIST_DIR}/${DIST_FILE_SRC}" token="@TIME@" value="${TIME}" />
+		<replace file="${DIST_DIR}/${DIST_FILE_SRC}" token="@VERSION@" value="${VERSION}" />
+		<replace file="${DIST_DIR}/${DIST_FILE_SRC}" token="@README@" value="${README}" />
+
+		<!-- append lib files -->
+		<!-- cssBeautifier -->
+		<loadfile property="LIB_CSS_BEAUTIFY" srcFile="${SOURCE_LIB}/cssBeautify.js" />
+		<echo append="true" file="${DIST_DIR}/${DIST_FILE_SRC}">${LIB_CSS_BEAUTIFY}</echo>
+		<!-- jsBeautifier -->
+		<loadfile property="LIB_JS_BEAUTIFIER" srcFile="${SOURCE_LIB}/jsBeautifier.js" />
+		<echo append="true" file="${DIST_DIR}/${DIST_FILE_SRC}">${LIB_JS_BEAUTIFIER}</echo>
+
+	</target>
+
+	<!-- Create Minimized File -->
+	<target name="build.min" depends="build.src" description="Create minimized file.">
+		<echo message="Creating minimized file: ${DIST_FILE_MIN}" />
+		<apply executable="java" parallel="false" verbose="true" dest="${DIST_DIR}">
+			<fileset dir="${DIST_DIR}">
+				<include name="${DIST_FILE_SRC}" />
+			</fileset>
+			<arg line="-jar" />
+			<arg path="${YUI}" />
+			<arg value="--verbose" />
+			<arg value="--charset" />
+			<arg value="UTF-8" />
+			<arg value="--type" />
+			<arg value="js" />
+			<arg value="--line-break" />
+			<arg value="200" />
+			<arg value="-o" />
+			<targetfile />
+			<mapper type="glob" from="${DIST_FILE_SRC}" to="${DIST_FILE_MIN}" />
+		</apply>
+	</target>
+
+	<target name="build.examples" depends="build.min" description="Build the example html/xhtml files.">
+		<echo message="Building the example html/xhtml files." />
+
+		<!-- store template contents -->
+		<loadfile property="TEMPLATE_END_BOTH" srcFile="${TEMPLATES_DIR}/template-end-both.txt" />
+		<loadfile property="TEMPLATE_START_HTML5" srcFile="${TEMPLATES_DIR}/template-start-html5.txt" />
+		<loadfile property="TEMPLATE_START_XHTML" srcFile="${TEMPLATES_DIR}/template-start-xhtml.txt" />
+
+		<!-- write files -->
+		<echo file="${EXAMPLES_DIR}/index-html5.html" message="${TEMPLATE_START_HTML5}${TEMPLATE_END_BOTH}" />
+		<echo file="${EXAMPLES_DIR}/index-html5.xhtml" message="${TEMPLATE_START_HTML5}${TEMPLATE_END_BOTH}" />
+		<echo file="${EXAMPLES_DIR}/index-xhtml.html" message="${TEMPLATE_START_XHTML}${TEMPLATE_END_BOTH}" />
+		<echo file="${EXAMPLES_DIR}/index-xhtml.xhtml" message="${TEMPLATE_START_XHTML}${TEMPLATE_END_BOTH}" />
+
+		<!-- set correct titles -->
+		<replace file="${EXAMPLES_DIR}/index-html5.html" token="@TITLE@" value="HTML5 as text/html" />
+		<replace file="${EXAMPLES_DIR}/index-html5.xhtml" token="@TITLE@" value="HTML5 as xhtml+xml" />
+		<replace file="${EXAMPLES_DIR}/index-xhtml.html" token="@TITLE@" value="XHTML as text/html" />
+		<replace file="${EXAMPLES_DIR}/index-xhtml.xhtml" token="@TITLE@" value="XHTML as xhtml+xml" />
+
+		<!-- set correct version -->
+		<replace file="${EXAMPLES_DIR}/index-html5.html" token="@VERSION@" value="${VERSION}" />
+		<replace file="${EXAMPLES_DIR}/index-html5.xhtml" token="@VERSION@" value="${VERSION}" />
+		<replace file="${EXAMPLES_DIR}/index-xhtml.html" token="@VERSION@" value="${VERSION}" />
+		<replace file="${EXAMPLES_DIR}/index-xhtml.xhtml" token="@VERSION@" value="${VERSION}" />
+	</target>
+
+	<!-- Refresh Eclipse Workspace -->
+	<target name="build.refresh" depends="build.examples" description="Refresh Eclipse Workspace">
+		<echo message="Refreshing the Eclipse Workspace." />
+		<eclipse.convertPath fileSystemPath="${basedir}" property="basepath"/>
+		<eclipse.refreshLocal resource="${basepath}" depth="infinite" />
+	</target>
+
+	<!-- Run JSLint, create build files, then refresh workspace -->
+	<target name="all" depends="build.lint, build.clear, build.src, build.min, build.examples, build.refresh">
+		<echo message="Build complete." />
+	</target>
+
+</project>
