@@ -37,8 +37,8 @@ is somewhat strange.
   
 IE Quirks/Bugs:  
   * Tag names will be in all uppercase because IE doesn't support node.prefix and node.localName when parsing DOM nodes
-  * For the same reason above, namespaces will not be printed correctly: <svg:svg /> will turn into <SVG />
-  * <style /> and <script /> tags lose their contents
+  * For the same reason above, namespaces will not be printed correctly: &lt;svg:svg /&gt; will turn into &lt;SVG /&gt;
+  * &lt;style /&gt; and &lt;script /&gt; tags lose their contents
   * Doctype nodes are treated as a comment (standards vs quirks mode)
   
   
