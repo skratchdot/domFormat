@@ -4,6 +4,7 @@
 ### Description ###
 domFormat is a simple javascript library to get DOM nodes as formatted/pretty
 strings.  It provides a simple API with 2 functions:  
+  
     domFormat.init(settings);  
     domFormat.getString(node);  
   
@@ -18,7 +19,7 @@ DOM parsing to create a "prettified" string.
   
 ### Links ###
 [Source Code / Download](https://github.com/skratchdot/domFormat)  
-[Examples](https://skratchdot.github.com/domFormat/examples/index-html5.html)  
+[Examples](http://skratchdot.github.com/domFormat/examples/index-html5.html)  
   
   
 ### Libraries Used / Included ###
@@ -36,30 +37,16 @@ is somewhat strange.
   
 IE Quirks/Bugs:  
   * Tag names will be in all uppercase because IE doesn't support 
-    node.prefix and node.localName when parsing DOM nodes  
+    node.prefix and node.localName when parsing DOM nodes
   * For the same reason above, namespaces will not be printed
-    correctly: <svg:svg /> will turn into <SVG />  
+    correctly: <svg:svg /> will turn into <SVG />
   * <style /> and <script /> tags lose their contents
   * Doctype nodes are treated as a comment (standards vs quirks mode)
   
   
 ### Bookmarklets ###
 
-[Reload Page With Formatted Source](javascript:(function(){var%20doc%3Ddocument.cloneNode(true)%7C%7Cdocument%3Bvar%20script%3Ddocument.createElement('script')%3Bscript.setAttribute('src'%2C'http%3A%2F%2Fskratchdot.github.com%2FdomFormat%2FdomFormat.min.js')%3Bscript.addEventListener('load'%2Cfunction()%7Bvar%20domString%3DdomFormat.getString(doc)%3Bdocument.write(domString)%3Bdocument.close()%3B%7D%2Cfalse)%3Bdocument.body.appendChild(script)%3B}());)  
-
-    javascript:(function() {
-    	var doc = document.cloneNode(true) || document;
-    	var script = document.createElement('script');
-    	script.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
-    	script.addEventListener('load', function() {
-    		var domString = domFormat.getString(doc);
-    		document.write(domString);
-    		document.close();
-    	}, false);
-    	document.body.appendChild(script);
-    }());
-
-[Show Source](javascript:(function(){var%20doc%3Ddocument.cloneNode(true)%7C%7Cdocument%3Bvar%20script%3Ddocument.createElement('script')%3Bscript.setAttribute('src'%2C'http%3A%2F%2Fskratchdot.github.com%2FdomFormat%2FdomFormat.min.js')%3Bscript.addEventListener('load'%2Cfunction()%7Bvar%20domString%3DdomFormat.getString(doc)%3Bdocument.write('%3Ctextarea%20id%3D%22showSource%22%20style%3D%22width%3A100%25%3Bheight%3A100%25%3Bborder%3A0%3Bmargin%3A0%3Bpadding%3A0%3Bwhitespace%3Anowrap%3B%22%3E%3C%2Ftextarea%3E')%3Bdocument.getElementById('showSource').value%3DdomString%3Bdocument.close()%3B%7D%2Cfalse)%3Bdocument.body.appendChild(script)%3B}());)  
+[Show Source](javascript:%28function%28%29{var%20doc%3Ddocument.cloneNode%28true%29%7C%7Cdocument%3Bvar%20script%3Ddocument.createElement%28'script'%29%3Bscript.setAttribute%28'src'%2C'http%3A%2F%2Fskratchdot.github.com%2FdomFormat%2FdomFormat.min.js'%29%3Bscript.addEventListener%28'load'%2Cfunction%28%29%7Bvar%20domString%3DdomFormat.getString%28doc%29%3Bdocument.write%28'%3Ctextarea%20id%3D%22showSource%22%20style%3D%22width%3A100%25%3Bheight%3A100%25%3Bborder%3A0%3Bmargin%3A0%3Bpadding%3A0%3Bwhitespace%3Anowrap%3B%22%3E%3C%2Ftextarea%3E'%29%3Bdocument.getElementById%28'showSource'%29.value%3DdomString%3Bdocument.close%28%29%3B%7D%2Cfalse%29%3Bdocument.body.appendChild%28script%29%3B}%28%29%29;)  
 
     javascript:(function() {
     	var doc = document.cloneNode(true) || document;
@@ -74,14 +61,28 @@ IE Quirks/Bugs:
     	document.body.appendChild(script);
     }());
   
+[Reload Page With Formatted Source](javascript:%28function%28%29{var%20doc%3Ddocument.cloneNode%28true%29%7C%7Cdocument%3Bvar%20script%3Ddocument.createElement%28'script'%29%3Bscript.setAttribute%28'src'%2C'http%3A%2F%2Fskratchdot.github.com%2FdomFormat%2FdomFormat.min.js'%29%3Bscript.addEventListener%28'load'%2Cfunction%28%29%7Bvar%20domString%3DdomFormat.getString%28doc%29%3Bdocument.write%28domString%29%3Bdocument.close%28%29%3B%7D%2Cfalse%29%3Bdocument.body.appendChild%28script%29%3B}%28%29%29;)  
+
+    javascript:(function() {
+    	var doc = document.cloneNode(true) || document;
+    	var script = document.createElement('script');
+    	script.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
+    	script.addEventListener('load', function() {
+    		var domString = domFormat.getString(doc);
+    		document.write(domString);
+    		document.close();
+    	}, false);
+    	document.body.appendChild(script);
+    }());
+  
   
 ### Version History ###
 
 #### v1.0 - Released July 25, 2011 ####
   * Initial Release
-  * Known Bugs:
+  * Known Bugs:  
     1) IE Quirks/Bugs listed in the Browser Support section above
-    2) Unsupported node types:
+    2) Unsupported node types:  
       *  Node.ENTITY_REFERENCE_NODE === 5
       *  Node.ENTITY_NODE === 6
       *  Node.PROCESSING_INSTRUCTION_NODE === 7
