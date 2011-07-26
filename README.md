@@ -46,7 +46,7 @@ IE Quirks/Bugs:
   
 ### Bookmarklets ###
 
-[Show Source](javascript:%28function%28%29{var%20doc%3Ddocument.cloneNode%28true%29%7C%7Cdocument%3Bvar%20script%3Ddocument.createElement%28'script'%29%3Bscript.setAttribute%28'src'%2C'http%3A%2F%2Fskratchdot.github.com%2FdomFormat%2FdomFormat.min.js'%29%3Bscript.addEventListener%28'load'%2Cfunction%28%29%7Bvar%20domString%3DdomFormat.getString%28doc%29%3Bdocument.write%28'%3Ctextarea%20id%3D%22showSource%22%20style%3D%22width%3A100%25%3Bheight%3A100%25%3Bborder%3A0%3Bmargin%3A0%3Bpadding%3A0%3Bwhitespace%3Anowrap%3B%22%3E%3C%2Ftextarea%3E'%29%3Bdocument.getElementById%28'showSource'%29.value%3DdomString%3Bdocument.close%28%29%3B%7D%2Cfalse%29%3Bdocument.body.appendChild%28script%29%3B}%28%29%29;)  
+[Show Source](javascript:%28function%28%29{var%20doc%3Ddocument.cloneNode%28true%29%7C%7Cdocument%3Bvar%20script%3Ddocument.createElement%28'script'%29%3Bscript.setAttribute%28'src'%2C'http%3A%2F%2Fskratchdot.github.com%2FdomFormat%2FdomFormat.min.js'%29%3Bscript.addEventListener%28'load'%2Cfunction%28%29%7Bvar%20domString%3DdomFormat.getString%28doc%29%3Bdocument.write%28'%3Ctextarea%20wrap%3D%22off%22%20id%3D%22showSource%22%20style%3D%22width%3A100%25%3Bheight%3A100%25%3Bborder%3A0%3Bmargin%3A0%3Bpadding%3A0%3Bwhitespace%3Anowrap%3B%22%3E%3C%2Ftextarea%3E'%29%3Bdocument.getElementById%28'showSource'%29.value%3DdomString%3Bdocument.close%28%29%3B%7D%2Cfalse%29%3Bdocument.body.appendChild%28script%29%3B}%28%29%29;)  
 
     javascript:(function() {
     	var doc = document.cloneNode(true) || document;
@@ -54,7 +54,7 @@ IE Quirks/Bugs:
     	script.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
     	script.addEventListener('load', function() {
     		var domString = domFormat.getString(doc);
-    		document.write('<textarea id="showSource" style="width:100%;height:100%;border:0;margin:0;padding:0;whitespace:nowrap;"></textarea>');
+    		document.write('<textarea wrap="off" id="showSource" style="width:100%;height:100%;border:0;margin:0;padding:0;whitespace:nowrap;"></textarea>');
     		document.getElementById('showSource').value = domString;
     		document.close();
     	}, false);
