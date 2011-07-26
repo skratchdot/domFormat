@@ -4,7 +4,7 @@
  * Release Date: @TIME@
  *      Version: @VERSION@
  *  Source Code: https://github.com/skratchdot/domFormat  
- *     Examples: https://skratchdot.github.com/domFormat/examples/index-html5.html  
+ *     Examples: http://skratchdot.github.com/domFormat/examples/index-html5.html  
  * 
  * Copyright (c) 2011 SKRATCHDOT.COM
  * Dual licensed under the MIT and GPL licenses:
