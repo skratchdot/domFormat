@@ -81,8 +81,8 @@ IE Quirks/Bugs:
 #### v1.0 - Released July 25, 2011 ####
   * Initial Release
   * Known Bugs:  
-    1) IE Quirks/Bugs listed in the Browser Support section above
-    2) Unsupported node types:  
+    1. IE Quirks/Bugs listed in the Browser Support section above
+    2. Unsupported node types:  
       *  Node.ENTITY_REFERENCE_NODE === 5
       *  Node.ENTITY_NODE === 6
       *  Node.PROCESSING_INSTRUCTION_NODE === 7
