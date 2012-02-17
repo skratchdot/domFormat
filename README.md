@@ -11,7 +11,7 @@ strings.  It provides a simple API with 2 functions:
 I created it as a way to help compare the generated source of 2 pages when
 doing development.  Before creating this library, I had searched for another
 library to do something similar, but everything I evaluated gave results
-that were formatted slightly different than they way I wanted.  
+that were formatted slightly different than the way I wanted.  
   
 This code is designed to run in the browser, and uses the browser's native 
 DOM parsing to create a "prettified" string.  
