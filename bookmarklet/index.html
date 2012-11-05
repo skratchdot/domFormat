@@ -58,7 +58,7 @@ l = function (u, fn) {
   s.addEventListener('load', fn, false);
   d.body.appendChild(s);
 };
-l('http://skratchdot.github.com/domFormat/domFormat-1.0.min.js', function () {
+l('http://skratchdot.github.com/domFormat/domFormat.min.js', function () {
   ds = domFormat.getString(doc);
   l('http://skratchdot.github.com/domFormat/bookmarklet/view-source.js', function () {
     window.ds = ds;
