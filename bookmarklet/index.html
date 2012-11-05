@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>View Formatted Source - bookmarklet by skratchdot</title>
+	<style type="text/css">
+		html, body, h1, div {
+			border: 0;
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			background: #000;
+		}
+		h1 {
+			font-family: Georgia,"Palatino Linotype","Times New Roman",serif;
+			padding: 10px;
+			background: #ddd;
+			clear: both;
+			float: none;
+		}
+		h1 small {
+			font-size: 12px;
+		}
+		h1 small a {
+			color: #c80000;
+			text-decoration: none;
+		}
+		#copy-container {
+			width: 32px;
+			height: 32px;
+			float: right;
+			cursor: pointer;
+			position: relative;
+		}
+		#copy {
+			width: 32px;
+			height: 32px;
+		}
+		#editor {
+			position: relative;
+		}
+	</style>
+</head>
+<body>
+	<h1 id="header">
+		View Formatted Source
+		<small>
+			bookmarklet by
+			<a href="http://skratchdot.com/">skratchdot</a>
+			/
+			install:
+			<a href="javascript:(function(d){
+var s, ds, doc = d.cloneNode(true) || d;
+l = function (u, fn) {
+  s = d.createElement('script'),
+  s.setAttribute('src', u);
+  s.addEventListener('load', fn, false);
+  d.body.appendChild(s);
+};
+l('http://skratchdot.github.com/domFormat/domFormat-1.0.min.js', function () {
+  ds = domFormat.getString(doc);
+  l('http://skratchdot.github.com/domFormat/bookmarklet/view-source.js', function () {
+    window.ds = ds;
+  });
+});
+}(document));">View Formatted Source</a>
+		</small>
+		<div id="copy-container">
+			<img
+				id="copy"
+				src="http://skratchdot.github.com/domFormat/bookmarklet/copy.png"
+				alt="Copy formatted source to clipboard"
+				title="Copy formatted source to clipboard"
+			/>
+		</div>
+	</h1>
+	<div id="editor">
+This is a bookmarklet that uses the following libraries to display
+the formatted html of a given page:
+
+	- domFormat: https://github.com/skratchdot/domFormat/
+	- CSS Beautify: https://github.com/senchalabs/cssbeautify/
+	- JS Beautifier: https://github.com/einars/js-beautify/
+	- ACE Editor: https://github.com/ajaxorg/ace/
+
+To install it, drag the red "View Formatted Source" link to your
+bookmarks toolbar.
+
+To use it, visit a webpage, and click the bookmarklet.
+
+To copy the contents of this editor, click the copy icon in the
+top right corner of this webpage.
+	</div>
+	<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://skratchdot.github.com/domFormat/bookmarklet/ZeroClipboard.min.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		(function () {
+			var elem = (document.compatMode === "CSS1Compat") ? document.documentElement : document.body,
+				height = elem.clientHeight,
+				header = document.getElementById('header'),
+				editor = document.getElementById('editor'),
+				copy = document.getElementById('copy'),
+				doc = '', domString = '', clip;
+
+			// Make sure our "source" div fills the screen.  ACE editor doesn't allow percentages
+			editor.style.height = (height - header.clientHeight) + 'px';
+
+			// Now initialize our editor
+			window.editor = ace.edit('editor');
+			window.editor.setTheme('ace/theme/twilight');
+			window.editor.getSession().setMode('ace/mode/html');
+
+			// Add functionality to copy button
+			ZeroClipboard.setMoviePath('http://skratchdot.github.com/domFormat/bookmarklet/ZeroClipboard.swf');
+			clip = new ZeroClipboard.Client();
+			clip.setText('');
+			clip.glue('copy', 'copy-container');
+			clip.addEventListener('onMouseDown', function () {
+				clip.setText(window.editor.getValue());
+			});
+			clip.addEventListener('onComplete', function () {
+				alert('The editor contents have been copied to your clipboard.');
+				window.editor.focus();
+			});
+
+			// Populate editor with domFormat string if it exists
+			if (window.hasOwnProperty('ds')) {
+				window.editor.setValue(ds);
+				window.editor.clearSelection();
+			}
+		}());
+	</script>
+</body>
+</html>
