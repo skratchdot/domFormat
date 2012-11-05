@@ -1,5 +1,5 @@
 	     <title>domFormat - Simple Example (@TITLE@)</title>
-<script type="text/javascript" src="../domFormat-@VERSION@.min.js"></script>
+<script type="text/javascript" src="../domFormat.min.js"></script>
 	                 <script type="text/javascript">
 	//<![CDATA[
 		var populateTextarea = function(node) {

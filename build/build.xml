@@ -4,8 +4,8 @@
 	<property name="VERSION" value="1.0" description="Current version number." />
 	<!-- Directory and file names for source and distribution files -->
 	<property name="DIST_DIR" value="${basedir}" description="Output folder for the files to distribute." />
-	<property name="DIST_FILE_SRC" value="${PROJECT_NAME}-${VERSION}.js" />
-	<property name="DIST_FILE_MIN" value="${PROJECT_NAME}-${VERSION}.min.js" />
+	<property name="DIST_FILE_SRC" value="${PROJECT_NAME}.js" />
+	<property name="DIST_FILE_MIN" value="${PROJECT_NAME}.min.js" />
 	<property name="EXAMPLES_DIR" value="${basedir}/examples" description="Output folder for the example files." />
 	<property name="TEMPLATES_DIR" value="${EXAMPLES_DIR}/templates" description="Folder containing the example template files." />
 	<property name="README_FILE" value="${basedir}/README.md" description="Path to the README file." />
