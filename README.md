@@ -30,11 +30,14 @@ DOM parsing to create a "prettified" string.
 ### Libraries Used / Included ###
 
 [CSS Beautify](https://github.com/senchalabs/cssbeautify)
- - Originally written by Ariya Hidayat
- - Copyright (C) 2011 Sencha Inc.  
+
+- Originally written by Ariya Hidayat
+
+- Copyright (C) 2011 Sencha Inc.  
 
 [JS Beautifier](https://github.com/einars/js-beautify)
- - Originally written by Einar Lielmanis
+
+- Originally written by Einar Lielmanis
 
 
 ### Browser Support ###
@@ -44,23 +47,29 @@ is somewhat strange.
   
 IE Quirks/Bugs:  
 
-  * Tag names will be in all uppercase because IE doesn't support 
-    node.prefix and node.localName when parsing DOM nodes
-  * For the same reason above, namespaces will not be printed 
-    correctly: &lt;svg:svg /&gt; will turn into &lt;SVG /&gt;
-  * &lt;style /&gt; and &lt;script /&gt; tags lose their contents
-  * Doctype nodes are treated as a comment (standards vs quirks mode)
+* Tag names will be in all uppercase because IE doesn't support 
+  node.prefix and node.localName when parsing DOM nodes
+
+* For the same reason above, namespaces will not be printed 
+  correctly: &lt;svg:svg /&gt; will turn into &lt;SVG /&gt;
+
+* &lt;style /&gt; and &lt;script /&gt; tags lose their contents
+
+* Doctype nodes are treated as a comment (standards vs quirks mode)
 
 
 ### Version History ###
 
 #### v1.0 - Released July 25, 2011 ####
-  * Initial Release
-  * Known Bugs:  
-    1. IE Quirks/Bugs listed in the Browser Support section above
-    2. Unsupported node types:  
-      *  Node.ENTITY_REFERENCE_NODE === 5
-      *  Node.ENTITY_NODE === 6
-      *  Node.PROCESSING_INSTRUCTION_NODE === 7
-      *  Node.NOTATION_NODE === 12
-  
+
+* Initial Release
+
+* Known Bugs:  
+
+  1. IE Quirks/Bugs listed in the Browser Support section above
+  2. Unsupported node types:  
+    *  Node.ENTITY_REFERENCE_NODE === 5
+    *  Node.ENTITY_NODE === 6
+    *  Node.PROCESSING_INSTRUCTION_NODE === 7
+    *  Node.NOTATION_NODE === 12
+
