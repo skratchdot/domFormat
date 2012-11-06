@@ -1,7 +1,7 @@
 <project name="Build SRC and MIN Files" default="all" basedir="..">
 	<!-- Basic project info: name/version -->
 	<property name="PROJECT_NAME" value="domFormat" description="The name of this project." />
-	<property name="VERSION" value="1.0" description="Current version number." />
+	<property name="VERSION" value="1.1" description="Current version number." />
 	<!-- Directory and file names for source and distribution files -->
 	<property name="DIST_DIR" value="${basedir}" description="Output folder for the files to distribute." />
 	<property name="DIST_FILE_SRC" value="${PROJECT_NAME}.js" />
