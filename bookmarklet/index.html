@@ -136,11 +136,11 @@ The following libaries were used in the building of these bookmarklets:
 
 			// Populate editor with domFormat string if it exists
 			if (window.localStorage) {
-				domString = window.localStorage.getItem('DOMFORMAT');
+				domString = window.localStorage['DOMFORMAT'];
 				if (typeof domString === 'string' && domString.length > 0) {
 					window.editor.setValue(domString);
 					window.editor.clearSelection();
-					window.localStorage.removeItem('DOMFORMAT');
+					window.localStorage['DOMFORMAT'] = '';
 				}
 			}
 
@@ -150,9 +150,8 @@ The following libaries were used in the building of these bookmarklets:
 					s = d.createElement('script');
 				s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
 				s.addEventListener('load', function() {
-					var ds = domFormat.getString(doc);
 					if (w.localStorage) {
-						w.localStorage.setItem('DOMFORMAT', ds);
+						w.localStorage['DOMFORMAT'] = domFormat.getString(doc);
 					} else {
 						alert('Sorry. This bookmarklet only works on browsers that support localStorage.');
 					}
