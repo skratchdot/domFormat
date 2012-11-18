@@ -201,7 +201,11 @@ var BM = (function () {
 		$(window).resize(handleResize);
 
 		// was the bookmarklet just used?
-		if (window.localStorage && window.top && typeof window.top.localStorage.s1 === 'string' && window.top.localStorage.s1.length > 0) {
+		if (window.localStorage &&
+				window.top &&
+				window.top !== window &&
+				typeof window.top.localStorage.s1 === 'string' &&
+				window.top.localStorage.s1.length > 0) {
 			$('li[data-page="formatted-source"]').click();
 		}
 
