@@ -1,4 +1,4 @@
-/*global window, document, jQuery, $, ace, ZeroClipboard, domFormat, s1, s2 */
+/*global window, document, alert, jQuery, $, ace, ZeroClipboard, domFormat, s1, s2 */
 /*jslint devel: false, nomen: true, maxerr: 50, indent: 4 */
 
 // set bookmarklet version
@@ -32,16 +32,18 @@ var BM = (function () {
 			s = d.createElement('script');
 		s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
 		s.addEventListener('load', function () {
-			var i, s1, s2;
-			s1 = domFormat.getString(doc);
-			s2 = d.getElementsByTagName('html')[0] ? d.getElementsByTagName('html')[0].outerHTML || '' : '';
+			var i;
+			if (w.localStorage) {
+				w.localStorage.s1 = domFormat.getString(doc);
+				w.localStorage.s2 = d.getElementsByTagName('html')[0] ? d.getElementsByTagName('html')[0].outerHTML || '' : '';
+			} else {
+				alert('Sorry. This bookmarklet only works on browsers that support localStorage.');
+			}
 			d.open();
 			d.write('<style>html,body,iframe{width:100%;height:100%;padding:0;margin:0;border:0}</style><iframe id="i"></iframe>');
 			d.close();
 			i = d.getElementById('i');
 			i = i.contentWindow || i.contentDocument;
-			i.s1 = s1;
-			i.s2 = s2;
 			i.document.open();
 			i.document.write('<script src="http://skratchdot.github.com/domFormat/bookmarklet/view-source.js"></script>');
 			i.document.close();
@@ -91,11 +93,15 @@ var BM = (function () {
 	ensureSource = function (type) {
 		var doc, d = document;
 		if (typeof window[type] !== 'string') {
-			doc = d.cloneNode(true) || d;
-			if (type === 's1') {
-				window[type] = domFormat.getString(doc);
+			if (window.top && window.top.localStorage && typeof window.top.localStorage[type] === 'string') {
+				window[type] = window.top.localStorage[type];
 			} else {
-				window[type] = d.getElementsByTagName('html')[0] ? d.getElementsByTagName('html')[0].outerHTML || '' : '';
+				doc = d.cloneNode(true) || d;
+				if (type === 's1') {
+					window[type] = domFormat.getString(doc);
+				} else {
+					window[type] = d.getElementsByTagName('html')[0] ? d.getElementsByTagName('html')[0].outerHTML || '' : '';
+				}
 			}
 		}
 		editor.clearSelection();
@@ -136,9 +142,9 @@ var BM = (function () {
 	};
 
 	handleReloadPage = function (e) {
-		var win = window.parent || window;
+		var win = window.top || window;
 		e.preventDefault();
-		win.location = win.location;
+		win.location = win.location.href;
 	};
 
 	handleResize = function () {
@@ -195,7 +201,7 @@ var BM = (function () {
 		$(window).resize(handleResize);
 
 		// was the bookmarklet just used?
-		if (typeof s1 === 'string' && s1.length > 0) {
+		if (window.localStorage && window.top && typeof window.top.localStorage.s1 === 'string' && window.top.localStorage.s1.length > 0) {
 			$('li[data-page="formatted-source"]').click();
 		}
 
