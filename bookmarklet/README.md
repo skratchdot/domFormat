@@ -21,8 +21,7 @@
 [Ace](https://github.com/ajaxorg/ace/)
  - Copyright (c) 2010, Ajax.org B.V.
 
-[copy.png](http://www.veryicon.com/icons/application/toolbar-icons/copy.html)
- - Icon Author: Ruby Software
- - HomePage: http://www.rubysoftware.nl/free-toolbar-icon-collection/old.php?lang=en
- - License: Commercial usage: Allowed
+[Twitter Bootstrap](http://twitter.github.com/bootstrap/)
+
+[Bootswatch](http://bootswatch.com/readable/)
 

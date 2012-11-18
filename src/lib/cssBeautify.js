@@ -2,280 +2,468 @@
  * Slightly modified version of CSS Beautify:
  *     https://github.com/senchalabs/cssbeautify/
  *     Original Author: Ariya Hidayat
- *     Copyright (C) 2011 Sencha Inc.
+ *     Copyright (C) 2012 Sencha Inc.
  */
 /*
- Copyright (C) 2011 Sencha Inc.
+Copyright (C) 2012 Sencha Inc.
+Copyright (C) 2011 Sencha Inc.
 
- Author: Ariya Hidayat.
+Author: Ariya Hidayat.
 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 */
 
 /*jslint continue: true, indent: 4 */
+/*global exports:true, module:true, window:true */
 
-domFormat.cssBeautify = function (style, opt) {
-    "use strict";
-    var options, index = 0, length = style.length, formatted = '',
-        ch, ch2, str, state, State,
-        openbrace = ' {',
-        trimRight;
+(function () {
 
-    options = arguments.length > 1 ? opt : {};
-    if (typeof options.indent === 'undefined') {
-        options.indent = '    ';
-    }
-    if (typeof options.openbrace === 'string') {
-        openbrace = (options.openbrace === 'end-of-line') ? ' {' : '\n{';
-    }
+   'use strict';
 
-    function isWhitespace(c) {
-        return ' \t\n\r\f'.indexOf(c) >= 0;
-    }
+   function cssbeautify(style, opt) {
 
-    if (String.prototype.trimRight) {
-        trimRight = function (s) {
-            return s.trimRight();
-        };
-    } else {
-        // old Internet Explorer
-        trimRight = function (s) {
-            return s.replace(/\s+$/, '');
-        };
-    }
+       var options, index = 0, length = style.length, blocks, formatted = '',
+           ch, ch2, str, state, State, depth, quote, comment,
+           openbracesuffix = true,
+           autosemicolon = false,
+           trimRight;
 
-    State = {
-        Start: 0,
-        BlockComment: 1,
-        Selectors: 2,
-        Ruleset: 3,
-        PropertyName: 4,
-        Separator: 5,
-        PropertyValue: 6,
-        SingleQuotedString: 7,
-        DoubleQuotedString: 8
-    };
-    state = State.Start;
+       options = arguments.length > 1 ? opt : {};
+       if (typeof options.indent === 'undefined') {
+           options.indent = '    ';
+       }
+       if (typeof options.openbrace === 'string') {
+           openbracesuffix = (options.openbrace === 'end-of-line');
+       }
+       if (typeof options.autosemicolon === 'boolean') {
+           autosemicolon = options.autosemicolon;
+       }
 
-    // We want to deal with LF (\n) only
-    style = style.replace(/\r\n/g, '\n');
+       function isWhitespace(c) {
+           return (c === ' ') || (c === '\n') || (c === '\t') || (c === '\r') || (c === '\f');
+       }
 
-    while (index < length) {
-        ch = style.charAt(index);
-        ch2 = style.charAt(index + 1);
-        index += 1;
+       function isQuote(c) {
+           return (c === '\'') || (c === '"');
+       }
 
-        if (state === State.Start) {
+       // FIXME: handle Unicode characters
+       function isName(c) {
+           return (ch >= 'a' && ch <= 'z') ||
+               (ch >= 'A' && ch <= 'Z') ||
+               (ch >= '0' && ch <= '9') ||
+               '-_*.:#'.indexOf(c) >= 0;
+       }
 
-            // Copy white spaces and control characters
-            if (ch <= ' ' || ch.charCodeAt(0) >= 128) {
-                state = State.Start;
-                formatted += ch;
-                continue;
-            }
+       function appendIndent() {
+           var i;
+           for (i = depth; i > 0; i -= 1) {
+               formatted += options.indent;
+           }
+       }
 
-            // Block comment
-            if (ch === '/' && ch2 === '*') {
-                state = State.BlockComment;
-                formatted += ch;
-                formatted += ch2;
-                index += 1;
-                continue;
-            }
+       function openBlock() {
+           formatted = trimRight(formatted);
+           if (openbracesuffix) {
+               formatted += ' {';
+           } else {
+               formatted += '\n';
+               appendIndent();
+               formatted += '{';
+           }
+           if (ch2 !== '\n') {
+               formatted += '\n';
+           }
+           depth += 1;
+       }
 
-            // Selectors
-            // FIXME: handle Unicode characters
-            if ((ch >= 'a' && ch <= 'z') ||
-                    (ch >= 'A' && ch <= 'Z') ||
-                    (ch >= '0' && ch <= '9') ||
-                    (ch === '-') || (ch === '_') ||
-                    (ch === '.') || (ch === ':')) {
+       function closeBlock() {
+           depth -= 1;
+           formatted = trimRight(formatted);
 
-                // Clear trailing whitespaces and linefeeds.
-                str = trimRight(formatted);
+           if (autosemicolon) {
+               if (formatted.charAt(formatted.length - 1) !== ';') {
+                   formatted += ';';
+               }
+           }
 
-                // After finishing a ruleset, there should be one blank line.
-                if (str.charAt(str.length - 1) === '}') {
-                    formatted = str + '\n\n';
-                } else {
-                    // After block comment, keep all the linefeeds but
-                    // start from the first column (remove whitespaces prefix).
-                    while (true) {
-                        ch2 = formatted.charAt(formatted.length - 1);
-                        if (ch2 !== ' ' && ch2.charCodeAt(0) !== 9) {
-                            break;
-                        }
-                        formatted = formatted.substr(0, formatted.length - 1);
-                    }
-                }
-                formatted += ch;
-                state = State.Selectors;
-                continue;
-            }
-        }
+           formatted += '\n';
+           appendIndent();
+           formatted += '}';
+           blocks.push(formatted);
+           formatted = '';
+       }
 
-        if (state ===  State.BlockComment) {
-            // Continue until we hit the final marker '*/' (star, forward slash).
-            formatted += ch;
-            if (ch === '*' && ch2 === '/') {
-                state = State.Start;
-                formatted += ch2;
-                index += 1;
-            }
-            continue;
-        }
+       if (String.prototype.trimRight) {
+           trimRight = function (s) {
+               return s.trimRight();
+           };
+       } else {
+           // old Internet Explorer
+           trimRight = function (s) {
+               return s.replace(/\s+$/, '');
+           };
+       }
 
-        if (state === State.Selectors) {
-            // Continue until we hit '{'
-            if (ch === '{') {
-                formatted = trimRight(formatted);
-                formatted += openbrace;
-                if (ch2 !== '\n') {
-                    formatted += '\n';
-                }
-                state = State.Ruleset;
-            } else {
-                formatted += ch;
-            }
-            continue;
-        }
+       State = {
+           Start: 0,
+           AtRule: 1,
+           Block: 2,
+           Selector: 3,
+           Ruleset: 4,
+           Property: 5,
+           Separator: 6,
+           Expression: 7,
+           URL: 8
+       };
 
-        if (state === State.Ruleset) {
-            // Continue until we hit '}'
-            if (ch === '}') {
-                formatted = trimRight(formatted);
-                formatted += '\n}';
-                state = State.Start;
-                continue;
-            }
-            // Make sure there is no blank line or trailing spaces inbetween
-            if (ch === '\n') {
-                formatted = trimRight(formatted);
-                formatted += '\n';
-                continue;
-            }
-            // property name
-            if (!isWhitespace(ch)) {
-                formatted = trimRight(formatted);
-                formatted += '\n';
-                formatted += options.indent;
-                formatted += ch;
-                state = State.PropertyName;
-                continue;
-            }
-            formatted += ch;
-            continue;
-        }
+       depth = 0;
+       state = State.Start;
+       comment = false;
+       blocks = [];
 
-        if (state === State.PropertyName) {
-            // Continue until we hit ':'
-            if (ch === ':') {
-                formatted = trimRight(formatted);
-                formatted += ': ';
-                state = State.Separator;
-                continue;
-            }
-            // or until we hit '}'
-            if (ch === '}') {
-                formatted = trimRight(formatted);
-                formatted += '\n}';
-                state = State.Start;
-                continue;
-            }
-            formatted += ch;
-            continue;
-        }
+       // We want to deal with LF (\n) only
+       style = style.replace(/\r\n/g, '\n');
 
-        if (state === State.Separator) {
-            if (!isWhitespace(ch)) {
-                formatted += ch;
-                if (ch === '\'') {
-                    state = State.SingleQuotedString;
-                    continue;
-                } else if (ch === '"') {
-                    state = State.DoubleQuotedString;
-                    continue;
-                }
-                state = State.PropertyValue;
-                continue;
-            }
-            continue;
-        }
+       while (index < length) {
+           ch = style.charAt(index);
+           ch2 = style.charAt(index + 1);
+           index += 1;
 
-        if (state === State.PropertyValue) {
-            if (ch === '\'') {
-                formatted += ch;
-                state = State.SingleQuotedString;
-                continue;
-            }
-            if (ch === '"') {
-                formatted += ch;
-                state = State.DoubleQuotedString;
-                continue;
-            }
-            // Continue until we hit ';''
-            if (ch === ';') {
-                formatted = trimRight(formatted);
-                formatted += ';\n';
-                state = State.Ruleset;
-                continue;
-            }
-            // or until we hit '}'
-            if (ch === '}') {
-                formatted = trimRight(formatted);
-                formatted += '\n}';
-                state = State.Start;
-                continue;
-            }
-            formatted += ch;
-            continue;
-        }
+           // Inside a string literal?
+           if (isQuote(quote)) {
+               formatted += ch;
+               if (ch === quote) {
+                   quote = null;
+               }
+               if (ch === '\\' && ch2 === quote) {
+                   // Don't treat escaped character as the closing quote
+                   formatted += ch2;
+                   index += 1;
+               }
+               continue;
+           }
 
-        // TODO: fully implement http://www.w3.org/TR/CSS2/syndata.html#strings
-        if (state === State.SingleQuotedString) {
-            // Continue until we hit another single quote
-            if (ch === '\'') {
-                state = State.PropertyValue;
-                formatted += ch;
-                continue;
-            }
-            formatted += ch;
-            continue;
-        }
+           // Starting a string literal?
+           if (isQuote(ch)) {
+               formatted += ch;
+               quote = ch;
+               continue;
+           }
 
-        // TODO: fully implement http://www.w3.org/TR/CSS2/syndata.html#strings
-        if (state === State.DoubleQuotedString) {
-            // Continue until we hit another double quote
-            if (ch === '"') {
-                state = State.PropertyValue;
-                formatted += ch;
-                continue;
-            }
-            formatted += ch;
-            continue;
-        }
+           // Comment
+           if (comment) {
+               formatted += ch;
+               if (ch === '*' && ch2 === '/') {
+                   comment = false;
+                   formatted += ch2;
+                   index += 1;
+               }
+               continue;
+           } else {
+               if (ch === '/' && ch2 === '*') {
+                   comment = true;
+                   formatted += ch;
+                   formatted += ch2;
+                   index += 1;
+                   continue;
+               }
+           }
+
+           if (state === State.Start) {
+
+               if (blocks.length === 0) {
+                   if (isWhitespace(ch) && formatted.length === 0) {
+                       continue;
+                   }
+               }
+
+               // Copy white spaces and control characters
+               if (ch <= ' ' || ch.charCodeAt(0) >= 128) {
+                   state = State.Start;
+                   formatted += ch;
+                   continue;
+               }
+
+               // Selector or at-rule
+               if (isName(ch) || (ch === '@')) {
+
+                   // Clear trailing whitespaces and linefeeds.
+                   str = trimRight(formatted);
+
+                   if (str.length === 0) {
+                       // If we have empty string after removing all the trailing
+                       // spaces, that means we are right after a block.
+                       // Ensure a blank line as the separator.
+                       if (blocks.length > 0) {
+                           formatted = '\n\n';
+                       }
+                   } else {
+                       // After finishing a ruleset or directive statement,
+                       // there should be one blank line.
+                       if (str.charAt(str.length - 1) === '}' ||
+                               str.charAt(str.length - 1) === ';') {
+
+                           formatted = str + '\n\n';
+                       } else {
+                           // After block comment, keep all the linefeeds but
+                           // start from the first column (remove whitespaces prefix).
+                           while (true) {
+                               ch2 = formatted.charAt(formatted.length - 1);
+                               if (ch2 !== ' ' && ch2.charCodeAt(0) !== 9) {
+                                   break;
+                               }
+                               formatted = formatted.substr(0, formatted.length - 1);
+                           }
+                       }
+                   }
+                   formatted += ch;
+                   state = (ch === '@') ? State.AtRule : State.Selector;
+                   continue;
+               }
+           }
+
+           if (state === State.AtRule) {
+
+               // ';' terminates a statement.
+               if (ch === ';') {
+                   formatted += ch;
+                   state = State.Start;
+                   continue;
+               }
+
+               // '{' starts a block
+               if (ch === '{') {
+                   openBlock();
+                   state = State.Block;
+                   continue;
+               }
+
+               formatted += ch;
+               continue;
+           }
+
+           if (state === State.Block) {
+
+               // Selector
+               if (isName(ch)) {
+
+                   // Clear trailing whitespaces and linefeeds.
+                   str = trimRight(formatted);
+
+                   if (str.length === 0) {
+                       // If we have empty string after removing all the trailing
+                       // spaces, that means we are right after a block.
+                       // Ensure a blank line as the separator.
+                       if (blocks.length > 0) {
+                           formatted = '\n\n';
+                       }
+                   } else {
+                       // Insert blank line if necessary.
+                       if (str.charAt(str.length - 1) === '}') {
+                           formatted = str + '\n\n';
+                       } else {
+                           // After block comment, keep all the linefeeds but
+                           // start from the first column (remove whitespaces prefix).
+                           while (true) {
+                               ch2 = formatted.charAt(formatted.length - 1);
+                               if (ch2 !== ' ' && ch2.charCodeAt(0) !== 9) {
+                                   break;
+                               }
+                               formatted = formatted.substr(0, formatted.length - 1);
+                           }
+                       }
+                   }
+
+                   appendIndent();
+                   formatted += ch;
+                   state = State.Selector;
+                   continue;
+               }
+
+               // '}' resets the state.
+               if (ch === '}') {
+                   closeBlock();
+                   state = State.Start;
+                   continue;
+               }
+
+               formatted += ch;
+               continue;
+           }
+
+           if (state === State.Selector) {
+
+               // '{' starts the ruleset.
+               if (ch === '{') {
+                   openBlock();
+                   state = State.Ruleset;
+                   continue;
+               }
+
+               // '}' resets the state.
+               if (ch === '}') {
+                   closeBlock();
+                   state = State.Start;
+                   continue;
+               }
+
+               formatted += ch;
+               continue;
+           }
+
+           if (state === State.Ruleset) {
+
+               // '}' finishes the ruleset.
+               if (ch === '}') {
+                   closeBlock();
+                   state = State.Start;
+                   if (depth > 0) {
+                       state = State.Block;
+                   }
+                   continue;
+               }
+
+               // Make sure there is no blank line or trailing spaces inbetween
+               if (ch === '\n') {
+                   formatted = trimRight(formatted);
+                   formatted += '\n';
+                   continue;
+               }
+
+               // property name
+               if (!isWhitespace(ch)) {
+                   formatted = trimRight(formatted);
+                   formatted += '\n';
+                   appendIndent();
+                   formatted += ch;
+                   state = State.Property;
+                   continue;
+               }
+               formatted += ch;
+               continue;
+           }
+
+           if (state === State.Property) {
+
+               // ':' concludes the property.
+               if (ch === ':') {
+                   formatted = trimRight(formatted);
+                   formatted += ': ';
+                   state = State.Expression;
+                   if (isWhitespace(ch2)) {
+                       state = State.Separator;
+                   }
+                   continue;
+               }
+
+               // '}' finishes the ruleset.
+               if (ch === '}') {
+                   closeBlock();
+                   state = State.Start;
+                   if (depth > 0) {
+                       state = State.Block;
+                   }
+                   continue;
+               }
+
+               formatted += ch;
+               continue;
+           }
+
+           if (state === State.Separator) {
+
+               // Non-whitespace starts the expression.
+               if (!isWhitespace(ch)) {
+                   formatted += ch;
+                   state = State.Expression;
+                   continue;
+               }
+
+               // Anticipate string literal.
+               if (isQuote(ch2)) {
+                   state = State.Expression;
+               }
+
+               continue;
+           }
+
+           if (state === State.Expression) {
+
+               // '}' finishes the ruleset.
+               if (ch === '}') {
+                   closeBlock();
+                   state = State.Start;
+                   if (depth > 0) {
+                       state = State.Block;
+                   }
+                   continue;
+               }
+
+               // ';' completes the declaration.
+               if (ch === ';') {
+                   formatted = trimRight(formatted);
+                   formatted += ';\n';
+                   state = State.Ruleset;
+                   continue;
+               }
+
+               formatted += ch;
+
+               if (ch === '(') {
+                   if (formatted.charAt(formatted.length - 2) === 'l' &&
+                           formatted.charAt(formatted.length - 3) === 'r' &&
+                           formatted.charAt(formatted.length - 4) === 'u') {
+
+                       // URL starts with '(' and closes with ')'.
+                       state = State.URL;
+                       continue;
+                   }
+               }
+
+               continue;
+           }
+
+           if (state === State.URL) {
 
 
-        // The default action is to copy the character (to prevent
-        // infinite loop).
-        formatted += ch;
-    }
+               // ')' finishes the URL (only if it is not escaped).
+               if (ch === ')' && formatted.charAt(formatted.length - 1 !== '\\')) {
+                   formatted += ch;
+                   state = State.Expression;
+                   continue;
+               }
+           }
 
-    return formatted;
-}
+           // The default action is to copy the character (to prevent
+           // infinite loop).
+           formatted += ch;
+       }
+
+       formatted = blocks.join('') + formatted;
+
+       return formatted;
+   }
+
+   if (typeof domFormat === 'object') {
+       // Browser loading.
+	   domFormat.cssBeautify = cssbeautify;
+   }
+
+}());

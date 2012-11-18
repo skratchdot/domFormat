@@ -1,210 +1,133 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<title>View Formatted Source - bookmarklet by skratchdot</title>
-	<style type="text/css">
-		html, body, h1, div {
-			border: 0;
-			margin: 0;
-			padding: 0;
-		}
-		body {
-			background: #000;
-		}
-		h1 {
-			font-family: Georgia,"Palatino Linotype","Times New Roman",serif;
-			padding: 10px;
-			background: #ddd;
-			clear: both;
-			float: none;
-		}
-		a#home {
-			color: #000;
-			text-decoration: none;
-		}
-		a#home:hover {
-			color: #c80000;			
-		}
-		h1 small {
-			font-size: 12px;
-		}
-		h1 small a {
-			color: #c80000;
-			text-decoration: none;
-		}
-		h1 small a:hover {
-			text-decoration: underline;
-		}
-		#copy-container {
-			width: 32px;
-			height: 32px;
-			float: right;
-			cursor: pointer;
-			position: relative;
-		}
-		#copy {
-			width: 32px;
-			height: 32px;
-		}
-		#editor {
-			position: relative;
-		}
-	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="view source, bookmarklet, bootstrap" />
+	<meta name="author" content="skratchdot.com" />
+
+	<!-- Styles -->
+	<link href="http://skratchdot.github.com/domFormat/bookmarklet/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="http://skratchdot.github.com/domFormat/bookmarklet/css/bookmarklet-helper.css" rel="stylesheet" />
+
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 </head>
 <body>
-	<h1 id="header">
-		<a id="home" href="http://skratchdot.com/projects/domFormat/">domFormat</a>
-		<small>
-			bookmarklets:
-			<a id="fn1" href="javascript:void(0);">View Source (pretty)</a>
-			/
-			<a id="fn2" href="javascript:void(0);">View Source (plain)</a>
-			/
-			<a id="fn3" href="javascript:void(0);">Reload Formatted</a>
-		</small>
-		<div id="copy-container">
-			<img
-				id="copy"
-				src="http://skratchdot.github.com/domFormat/bookmarklet/copy.png"
-				alt="Copy formatted source to clipboard"
-				title="Copy formatted source to clipboard"
-			/>
+	<!-- navigation -->
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="container">
+				<ul class="nav">
+					<li data-page="home" class="active divider-vertical"><a href="javascript:void(0);" class="brand"><i class="icon-home"></i> Home</a></li>
+					<li data-page="formatted-source" class="divider-vertical fix-left-margin"><a href="javascript:void(0);">View Formatted Source</a></li>
+					<li data-page="unformatted-source" class="divider-vertical fix-left-margin"><a href="javascript:void(0);">View Unformatted Source</a></li>
+				</ul>
+				<ul class="nav pull-right">
+					<li id="copy-container" class="hide"><button id="copy" class="btn" type="button"><i class="icon-file"></i> Copy Editor Text</button></li>
+					<li><button id="reload" class="btn" type="button"><i class="icon-refresh"></i> Reload Page</button></li>
+				</ul>
+			</div>
 		</div>
-	</h1>
-	<div id="editor">
-Install any of the 3 domFormat bookmarklets by dragging one of the
-red links above to your bookmarks toolbar.  To use the bookmarklets,
-visit any webpage, and click the link that you just saved.
-
-## View Source (pretty) ##
-
-    Displays the formatted HTML of any webpage, in an editor
-    that looks exactly like this webpage. Includes a "copy" button
-    in the top right corner that lets you copy all the contents of the
-    editor with one click.
-
-## View Source (plain) ##
-
-    Displays the formatted HTML of any webpage in a &lt;textarea /&gt;.
-
-## Reload Formatted ##
-
-    Takes the formatted HTML of the current page, and reloads the page
-    by using a document.write() statement.
-
-## Credits ##
-
-The following libaries were used in the building of these bookmarklets:
-
-	- domFormat: https://github.com/skratchdot/domFormat/
-	- CSS Beautify: https://github.com/senchalabs/cssbeautify/
-	- JS Beautifier: https://github.com/einars/js-beautify/
-	- ACE Editor: https://github.com/ajaxorg/ace/
 	</div>
+
+	<!-- just copied dialog -->
+	<div id="just-copied" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+			<h3 id="myModalLabel">Copy complete!</h3>
+		</div>
+		<div class="modal-body">
+			<p>All of the editor contents have been copied to your clipboard.</p>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+
+		<!-- homepage -->
+		<div id="home">
+			<div class="row-fluid">
+				<div class="hero-unit">
+					<h1>domFormat Bookmarklet</h1>
+					<p>
+						This is a tool for viewing the formatted source of a page.  To install
+						it, drag the "View Source" link below to your bookmarks toolbar.  Visit
+						any webpage, and click the bookmark you just saved.
+					</p>
+					<p>
+						<a class="btn btn-primary btn-large bm-pretty" href="javascript:void(0);">-- View Source --</a>
+					</p>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="span6">
+					<h2>All Bookmarklets:</h2>
+					<dl class="dl-horizontal">
+						<dt><a class="btn btn-primary btn-small bm-pretty" href="javascript:void(0);">View Source (pretty)</a></dt>
+						<dd>
+							This is the main bookmarklet. It allows you to view the formatted
+							source as well as the original source in an editor with syntax highlighting.
+						</dd>
+						<br />
+
+						<dt><a class="btn btn-primary btn-small bm-plain" href="javascript:void(0);">View Source (plain)</a></dt>
+						<dd>
+							This bookmarklet shows the formatted source in a &lt;textarea /&gt; element. It
+							is quick, but does not have the extended options of the main bookmarklet.
+						</dd>
+						<br />
+
+						<dt><a class="btn btn-primary btn-small bm-reload" href="javascript:void(0);">Reload Formatted</a></dt>
+						<dd>
+							This reloads the page with the formatted source.
+						</dd>
+					</dl>
+				</div>
+				<div class="span6">
+					<h2>Links / Credits:</h2>
+					<p>
+						The following libraries/tools were used in the
+						creation of these bookmarklets:
+					</p>
+					<ul>
+						<li><a href="http://skratchdot.com/projects/domFormat/">domFormat</a></li>
+						<li><a href="https://github.com/einars/js-beautify/">JS Beautifier</a></li>
+						<li><a href="https://github.com/senchalabs/cssbeautify/">CSS Beautify</a></li>
+						<li><a href="https://github.com/ajaxorg/ace/">ACE Editor</a></li>
+						<li><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></li>
+						<li><a href="http://bootswatch.com/readable/">Bootswatch (Readable Theme)</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<hr />
+				<div class="pull-right">
+					&copy; 2012 <a class="footer-icon" href="http://skratchdot.com">
+						skratchdot
+						<img width="16" height="16" alt="skratchdot" src="http://skratchdot.com/favicon.ico" />
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- ace editor -->
+		<div id="editor"></div>
+
+	</div>
+
+
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-	<script src="http://skratchdot.github.com/domFormat/bookmarklet/ZeroClipboard.min.js" type="text/javascript" charset="utf-8"></script>
-	<script>
-		(function () {
-			var elem = (document.compatMode === "CSS1Compat") ? document.documentElement : document.body,
-				height = elem.clientHeight,
-				header = document.getElementById('header'),
-				editor = document.getElementById('editor'),
-				copy = document.getElementById('copy'),
-				clip, domString, getBookmarklet, fn1, fn2, fn3;
-
-			// Make sure our "source" div fills the screen.  ACE editor doesn't allow percentages
-			editor.style.height = (height - header.clientHeight) + 'px';
-
-			// Now initialize our editor
-			window.editor = ace.edit('editor');
-			window.editor.setTheme('ace/theme/twilight');
-			window.editor.getSession().setMode('ace/mode/html');
-
-			// Add functionality to copy button
-			ZeroClipboard.setMoviePath('http://skratchdot.github.com/domFormat/bookmarklet/ZeroClipboard.swf');
-			clip = new ZeroClipboard.Client();
-			clip.setText('');
-			clip.glue('copy', 'copy-container');
-			clip.addEventListener('onMouseDown', function () {
-				clip.setText(window.editor.getValue());
-			});
-			clip.addEventListener('onComplete', function () {
-				alert('The editor contents have been copied to your clipboard.');
-				window.editor.focus();
-			});
-
-			// Populate editor with domFormat string if it exists
-			if (window.localStorage) {
-				domString = window.localStorage['DOMFORMAT'];
-				if (typeof domString === 'string' && domString.length > 0) {
-					window.editor.setValue(domString);
-					window.editor.clearSelection();
-					window.localStorage['DOMFORMAT'] = '';
-				}
-			}
-
-			// Define bookmarklet 1
-			fn1 = function (d,w) {
-				var doc = d.cloneNode(true) || d,
-					s = d.createElement('script');
-				s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
-				s.addEventListener('load', function() {
-					if (w.localStorage) {
-						w.localStorage['DOMFORMAT'] = domFormat.getString(doc);
-					} else {
-						alert('Sorry. This bookmarklet only works on browsers that support localStorage.');
-					}
-					s = d.createElement('script');
-					s.setAttribute('src', 'http://skratchdot.github.com/domFormat/bookmarklet/view-source.js');
-					d.body.appendChild(s);
-				}, false);
-				d.body.appendChild(s);
-			};
-
-			// Define bookmarklet 2
-			fn2 = function (d) {
-				var doc = d.cloneNode(true) || d,
-					s = d.createElement('script');
-				s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
-				s.addEventListener('load', function() {
-					var ds = domFormat.getString(doc);
-					d.open();
-					d.write('<textarea wrap="off" id="s" style="width:100%;height:100%;border:0;margin:0;padding:0;whitespace:nowrap;"></textarea>');
-					d.getElementById('s').value = ds;
-					d.close();
-				}, false);
-				d.body.appendChild(s);
-			};
-
-			// Define bookmarklet 3
-			fn3 = function (d) {
-				var doc = d.cloneNode(true) || d,
-					s = d.createElement('script');
-				s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
-				s.addEventListener('load', function() {
-					var ds = domFormat.getString(doc);
-					d.open();
-					d.write(ds);
-					d.close();
-				}, false);
-				d.body.appendChild(s);
-			};
-
-			// Helper function for removing whitespace from our bookmarklet code
-			getBookmarklet = function (fnText, passWindow) {
-				return 'javascript:(' +
-					fnText.replace(/\s+/gi, ' ') +
-					'(document' +
-					(passWindow === true ? ',window' : '') +
-					'));';
-			};
-
-			// Attach our bookmarklets to our anchor tags
-			document.getElementById('fn1').href = getBookmarklet(fn1.toString(), true);
-			document.getElementById('fn2').href = getBookmarklet(fn2.toString(), false);
-			document.getElementById('fn3').href = getBookmarklet(fn3.toString(), false);
-		}());
-	</script>
+	<script src="http://skratchdot.github.com/domFormat/bookmarklet/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://skratchdot.github.com/domFormat/bookmarklet/js/ZeroClipboard.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://skratchdot.github.com/domFormat/domFormat.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://skratchdot.github.com/domFormat/bookmarklet/js/bookmarklet-helper.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

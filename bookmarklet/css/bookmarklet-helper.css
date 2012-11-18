@@ -1,0 +1,48 @@
+.navbar, .container-fluid {
+	margin: 0;
+	padding: 0;
+}
+
+#home {
+	padding: 20px;
+}
+
+a.brand i.icon-home {
+	vertical-align: middle;
+}
+
+a:focus {
+	outline-style: none;
+}
+
+.hero-unit {
+	padding: 30px 60px;
+	margin: 20px 0 0 0;
+}
+
+#home h1, #home h2, #home h3 {
+	line-height: 1em;
+}
+
+#home dd {
+	font-size:14px;
+}
+
+#home hr {
+	margin: 0 0 10px 0;
+}
+
+.btn [class^="icon-"], .btn [class*=" icon-"] {
+    margin-top: 2px;
+}
+
+.navbar .fix-left-margin {
+	margin-left: -9px;
+}
+
+#copy-container {
+	padding-right: 10px;
+	position: relative;
+}
+
+
