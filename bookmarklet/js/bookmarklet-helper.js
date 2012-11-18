@@ -138,7 +138,7 @@ var BM = (function () {
 	handleReloadPage = function (e) {
 		var win = window.parent || window;
 		e.preventDefault();
-		win.location.reload();
+		win.location = win.location;
 	};
 
 	handleResize = function () {
