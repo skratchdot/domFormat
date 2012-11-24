@@ -142,9 +142,8 @@ var BM = (function () {
 	};
 
 	handleReloadPage = function (e) {
-		var win = window.top || window;
 		e.preventDefault();
-		win.location = win.location.href;
+		window.top.location = window.top.location.href;
 	};
 
 	handleResize = function () {
@@ -192,6 +191,12 @@ var BM = (function () {
 		// handle reload button click
 		$('#reload').click(handleReloadPage);
 
+		// handle outbound links
+		$('#links a, a.footer-icon').click(function (e) {
+			e.preventDefault();
+			window.top.location = $(this).attr('href');
+		});
+
 		// attach our bookmarklet links
 		$('.bm-pretty').attr('href', getBookmark(bookmarkPretty.toString(), true));
 		$('.bm-plain').attr('href', getBookmark(bookmarkPlain.toString(), false));
@@ -203,7 +208,7 @@ var BM = (function () {
 		// was the bookmarklet just used?
 		if (window.localStorage &&
 				window.top &&
-				window.top !== window &&
+				window.top !== window.self &&
 				typeof window.top.localStorage.s1 === 'string' &&
 				window.top.localStorage.s1.length > 0) {
 			$('li[data-page="formatted-source"]').click();

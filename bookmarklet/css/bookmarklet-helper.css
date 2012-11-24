@@ -15,9 +15,10 @@ a:focus {
 	outline-style: none;
 }
 
-.hero-unit {
+#home .hero-unit {
 	padding: 30px 60px;
 	margin: 20px 0 0 0;
+	text-align: center;
 }
 
 #home h1, #home h2, #home h3 {
@@ -45,4 +46,8 @@ a:focus {
 	position: relative;
 }
 
+a.footer-icon img {
+	width: 16px;
+	height: 16px;
+}
 
