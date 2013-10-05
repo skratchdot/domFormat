@@ -9,7 +9,7 @@
 ## Credits ##
 
 [domFormat](https://github.com/skratchdot/domFormat/)
- - Copyright (C) 2012 skratchdot.com
+ - Copyright (C) 2013 skratchdot.com
 
 [CSS Beautify](https://github.com/senchalabs/cssbeautify/)
  - Originally written by Ariya Hidayat

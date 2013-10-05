@@ -30,7 +30,7 @@ var BM = (function () {
 	bookmarkPretty = function (d, w) {
 		var doc = d.cloneNode(true) || d,
 			s = d.createElement('script');
-		s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
+		s.setAttribute('src', 'http://skratchdot.github.io/domFormat/domFormat.min.js');
 		s.addEventListener('load', function () {
 			var i;
 			if (w.localStorage) {
@@ -45,7 +45,7 @@ var BM = (function () {
 			i = d.getElementById('i');
 			i = i.contentWindow || i.contentDocument;
 			i.document.open();
-			i.document.write('<script src="http://skratchdot.github.com/domFormat/bookmarklet/view-source.js"></script>');
+			i.document.write('<script src="http://skratchdot.github.io/domFormat/bookmarklet/view-source.js"></script>');
 			i.document.close();
 		}, false);
 		d.body.appendChild(s);
@@ -55,7 +55,7 @@ var BM = (function () {
 	bookmarkPlain = function (d) {
 		var doc = d.cloneNode(true) || d,
 			s = d.createElement('script');
-		s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
+		s.setAttribute('src', 'http://skratchdot.github.io/domFormat/domFormat.min.js');
 		s.addEventListener('load', function () {
 			var ds = domFormat.getString(doc);
 			d.open();
@@ -70,7 +70,7 @@ var BM = (function () {
 	bookmarkReload = function (d) {
 		var doc = d.cloneNode(true) || d,
 			s = d.createElement('script');
-		s.setAttribute('src', 'http://skratchdot.github.com/domFormat/domFormat.min.js');
+		s.setAttribute('src', 'http://skratchdot.github.io/domFormat/domFormat.min.js');
 		s.addEventListener('load', function () {
 			var ds = domFormat.getString(doc);
 			d.open();
@@ -168,7 +168,7 @@ var BM = (function () {
 		editor.setShowPrintMargin(false);
 
 		// Add functionality to copy button
-		ZeroClipboard.setMoviePath('http://skratchdot.github.com/domFormat/bookmarklet/swf/ZeroClipboard.swf');
+		ZeroClipboard.setMoviePath('http://skratchdot.github.io/domFormat/bookmarklet/swf/ZeroClipboard.swf');
 		clip = new ZeroClipboard.Client();
 		clip.setText('');
 		clip.glue('copy', 'copy-container');
