@@ -1,12 +1,12 @@
 /*!
  * domFormat - A simple javascript library to get DOM nodes as strings.
  * 
- * Release Date: October 05, 2013 [2013-10-05 08:36:53]
- *      Version: 1.3
+ * Release Date: April 25, 2014 [2014-04-25 00:36:49]
+ *      Version: 1.4
  *  Source Code: https://github.com/skratchdot/domFormat  
- *     Examples: http://skratchdot.github.io/domFormat/examples/index-html5.html  
+ *     Examples: http://projects.skratchdot.com/domFormat/examples/index-html5.html  
  * 
- * Copyright (c) 2013 SKRATCHDOT.COM
+ * Copyright (c) 2014 SKRATCHDOT.COM
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
